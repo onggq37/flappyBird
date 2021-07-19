@@ -3,6 +3,7 @@
 const cvs = document.querySelector('#canvas');
 const ctx = cvs.getContext('2d');
 
+/*
 //load images
 const bird = new Image();
 const bg = new Image();
@@ -24,6 +25,7 @@ let gravity = 1;
 //gap between the pipes
 let gap = 100;
 let pX = cvs.width;
+let pipeDist = 80;
 let pipe = [];
 
 pipe[0] = {
@@ -50,7 +52,7 @@ function draw() {
         
         pipe[i].x--;
 
-        if(pipe[i].x === 125) {
+        if(pipe[i].x === pipeDist) {
             pipe.push ({
                 x: cvs.width,
                 y: Math.floor(Math.random()*pipeNorth.height)-pipeNorth.height,
@@ -66,7 +68,8 @@ function draw() {
     
     
     //console.log(bY);
-    requestAnimationFrame(draw);
+    //requestAnimationFrame(draw);
 }
 
-draw();
+draw();  
+*/
