@@ -27,6 +27,8 @@ cvs.addEventListener("click", function(e){
             bird.flap();
             break;
         case state.gameOver:
+            // pipes.reset();
+            // bird.speedReset();
             state.current = state.getReady;
             break;
     }
@@ -82,6 +84,7 @@ const bird = {
     h: 26,
     x: 50,
     y: 150,
+    radius: 12,
     
     frame: 0,
     period: 0, //frequency that the bird is flapping
@@ -180,9 +183,7 @@ const pipes = {
     },
 
     update: function() {
-        if (state.current !== state.game) { //only when the game is on, update new pipes
-            return;
-        } else {
+        if (state.current === state.game) {
             if(frames%100 === 0) { //every 100 frames create a new set of pipes with random position from -300 to -150
                 this.position.push({
                     x: cvs.width, //pipe always start outside of canvas
@@ -191,16 +192,32 @@ const pipes = {
             }
             for (let j=0; j<this.position.length; j++) {
                 let p = this.position[j];
-                p.x -= this.dx; //moving pipe to the left
+                let bottomPipeYPos = p.y+this.h+this.gap;
+
+                //Collision for top pipe
+                if (bird.x+bird.radius > p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius > p.y && bird.y-bird.radius < p.y+this.h) {
+                    state.current = state.gameOver;
+                }
                 
+                //Collision for bottom pipe
+                if (bird.x+bird.radius > p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius > bottomPipeYPos && bird.y-bird.radius < bottomPipeYPos+this.h) {
+                    state.current = state.gameOver;
+                }
+
+                //moving pipe to the left
+                p.x -= this.dx; 
+
                 //if pipe move out of canvas, remove it and increment score
-                if (p.x-this.w <= 0) { 
+                if (p.x+this.w <= 0) { 
                     this.position.shift();
                 }
             }
+        } else if (state.current === state.getReady) { //reset the position array
+            this.position = [];
         }
     }
 }
+
 //get ready
 const getReady = {
     sX: 0,
