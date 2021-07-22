@@ -112,8 +112,6 @@ const bird = {
     speed: 0,
     jump: 4.5,
     rotation: 0,
-    rotationRad: 5,
-
 
     draw: function() {
         let bird = this.animation[this.frame];
