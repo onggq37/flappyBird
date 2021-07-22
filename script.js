@@ -6,8 +6,25 @@ const ctx = cvs.getContext('2d');
 
 let frames = 0;
 
+//load image
 const sprite = new Image();
-sprite.src="images/sprite.png";
+sprite.src = "images/sprite.png";
+
+//load audio
+const pointAudio = new Audio();
+pointAudio.src = "audio/sfx_point.wav";
+
+const dieAudio = new Audio();
+dieAudio.src = "audio/sfx_die.wav";
+
+const flapAudio = new Audio();
+flapAudio.src = "audio/sfx_flap.wav";
+
+const hitAudio = new Audio();
+hitAudio.src = "audio/sfx_hit.wav";
+
+const swooshAudio = new Audio();
+swooshAudio.src = "audio/sfx_swooshing.wav";
 
 //game state
 const state = {
@@ -22,9 +39,11 @@ cvs.addEventListener("click", function(e){
     switch(state.current) {
         case state.getReady:
             state.current = state.game;
+            swooshAudio.play();
             break;
         case state.game:
             bird.flap();
+            flapAudio.play();
             break;
         case state.gameOver:
             // pipes.reset();
@@ -128,17 +147,19 @@ const bird = {
             this.speed = 0;
             this.y = 150; //reset bird position when game over
             this.rotation = 0 * Math.PI/180;
-        } else {
-            if (this.y+this.h/2 >= cvs.height-fg.h) {
+        } else { 
+            if (this.y+this.h/2 >= cvs.height-fg.h) { //Checking if bird touch the ground
                 this.y = cvs.height-fg.h-this.h/2;
                 if(state.current == state.game) {
                     state.current = state.gameOver;
+                    dieAudio.play();
                 }
             } else {
                 this.speed += this.gravity;
                 this.y += this.speed;  
             }
 
+            //Changing the rotation of the bird, if speed is greater than jump means bird id falling
             if (this.speed >= this.jump) {
                 this.rotation = 90 * Math.PI/180;
                 this.frame = 1;
@@ -197,11 +218,13 @@ const pipes = {
                 //Collision for top pipe
                 if (bird.x+bird.radius > p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius > p.y && bird.y-bird.radius < p.y+this.h) {
                     state.current = state.gameOver;
+                    hitAudio.play();
                 }
                 
                 //Collision for bottom pipe
                 if (bird.x+bird.radius > p.x && bird.x-bird.radius < p.x+this.w && bird.y+bird.radius > bottomPipeYPos && bird.y-bird.radius < bottomPipeYPos+this.h) {
                     state.current = state.gameOver;
+                    hitAudio.play();
                 }
 
                 //moving pipe to the left
