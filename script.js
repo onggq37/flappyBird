@@ -64,7 +64,7 @@ const fg = {
     },
 
     update: function() {
-        if (state.current == state.game) {
+        if (state.current === state.game) {
             this.x = (this.x - this.dx)%(this.w/2); //keep the fg moving and bring it back to it's original position once it past w/2
         }
     },
@@ -109,19 +109,19 @@ const bird = {
 
     update: function() {
         //during getReady state, bird flap slower
-        if(state.current == state.getReady) {
+        if (state.current === state.getReady) {
             this.period = 10;
         } else {
             this.period = 5;
         }
         
         //increment of bird frame, base on the game period
-        if(frames%this.period == 0){
+        if (frames%this.period === 0){
             this.frame += 1;
             this.frame = this.frame%this.animation.length; //ensure that frames go in loop
         }
 
-        if (state.current == state.getReady) {
+        if (state.current === state.getReady) {
             this.speed = 0;
             this.y = 150; //reset bird position when game over
             this.rotation = 0 * Math.PI/180;
@@ -147,7 +147,60 @@ const bird = {
         }
     }
 }
+//pipes
+const pipes = {
+    position: [],
 
+    top: {
+        sX: 553,
+        sY:0,
+    },
+    bottom: {
+        sX: 502,
+        sY: 0,
+    },
+    w: 53,
+    h: 400,
+    gap: 85,
+    maxYPos: -150,
+    dx: 2,
+
+    draw: function() {
+        for (let i=0; i<this.position.length; i++) { //looping through and drawing the top and bottom pipes
+            let p = this.position[i];
+            let topYPos = p.y;
+            let bottomYPos = p.y+this.h+this.gap;
+
+            //top pipe
+            ctx.drawImage(sprite, this.top.sX, this.top.sY, this.w, this.h, p.x, topYPos, this.w, this.h);
+
+            //bottom pipe
+            ctx.drawImage(sprite, this.bottom.sX, this.bottom.sY, this.w, this.h, p.x, bottomYPos, this.w, this.h);
+        }
+    },
+
+    update: function() {
+        if (state.current !== state.game) { //only when the game is on, update new pipes
+            return;
+        } else {
+            if(frames%100 === 0) { //every 100 frames create a new set of pipes with random position from -300 to -150
+                this.position.push({
+                    x: cvs.width, //pipe always start outside of canvas
+                    y: this.maxYPos*(Math.random()+1),
+                });
+            }
+            for (let j=0; j<this.position.length; j++) {
+                let p = this.position[j];
+                p.x -= this.dx; //moving pipe to the left
+                
+                //if pipe move out of canvas, remove it and increment score
+                if (p.x-this.w <= 0) { 
+                    this.position.shift();
+                }
+            }
+        }
+    }
+}
 //get ready
 const getReady = {
     sX: 0,
@@ -158,7 +211,7 @@ const getReady = {
     y: cvs.height/3,
 
     draw: function() {
-        if(state.current == state.getReady){
+        if (state.current === state.getReady){
             ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y, this.w, this.h);
         }
     }
@@ -174,7 +227,7 @@ const gameOver = {
     y: cvs.height/3,
 
     draw: function() {
-        if(state.current == state.gameOver) {
+        if (state.current === state.gameOver) {
             ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y, this.w, this.h);
         }
     }
@@ -185,6 +238,7 @@ function draw() {
     ctx.fillRect(0,0,cvs.width, cvs.height);
 
     bg.draw();
+    pipes.draw();
     fg.draw();
     bird.draw();
     getReady.draw();
@@ -194,6 +248,7 @@ function draw() {
 function update() {
     bird.update();
     fg.update();
+    pipes.update();
 }
 
 function loop() {
