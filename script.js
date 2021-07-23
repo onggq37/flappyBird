@@ -139,8 +139,9 @@ const bird = {
             this.frame = this.frame%this.animation.length; //ensure that frames go in loop
         }
         if (state.current === state.getReady) {
+            //reset bird when game over
             this.speed = 0;
-            this.y = 150; //reset bird position when game over
+            this.y = 150; 
             this.rotation = 0 * Math.PI/180;
         } else { 
             if (this.y+this.h/2 >= cvs.height-fg.h) { //Checking if bird touch the ground
