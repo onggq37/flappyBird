@@ -137,7 +137,7 @@ const bird = {
         if (frames%this.period === 0){
             this.frame += 1;
             this.frame = this.frame%this.animation.length; //ensure that frames go in loop
-        }›
+        }
         if (state.current === state.getReady) {
             this.speed = 0;
             this.y = 150; //reset bird position when game over
