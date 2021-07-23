@@ -282,7 +282,7 @@ const score = {
 
     draw: function() {
         ctx.fillStyle = "white";
-        ctx.strokeStyle = "black"
+        ctx.strokeStyle = "black";
 
         if (state.current === state.game) {
             ctx.lineWidth = 2;
