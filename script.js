@@ -114,11 +114,11 @@ const bird = {
     draw: function() {
         let bird = this.animation[this.frame];
 
-        ctx.save();
-        ctx.translate(this.x,this.y);
+        ctx.save(); //save the the position of all image
+        ctx.translate(this.x,this.y); //change the origin from 0,0 to the bird
         ctx.rotate(this.rotation);
-        ctx.drawImage(sprite, bird.sX, bird.sY, this.w, this.h, -this.w/2, -this.h/2, this.w, this.h);
-        ctx.restore();
+        ctx.drawImage(sprite, bird.sX, bird.sY, this.w, this.h, -this.w/2, -this.h/2, this.w, this.h); // draw the rotate bird
+        ctx.restore(); // return the position of all image
     },
 
     flap: function() {
