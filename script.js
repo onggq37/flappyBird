@@ -46,8 +46,6 @@ cvs.addEventListener("click", function(e){
             flapAudio.play();
             break;
         case state.gameOver:
-            // pipes.reset();
-            // bird.speedReset();
             state.current = state.getReady;
             break;
     }
@@ -231,6 +229,13 @@ const pipes = {
                 //if pipe move out of canvas, remove it and increment score
                 if (p.x+this.w <= 0) { 
                     this.position.shift();
+                    score.value += 1;
+                    
+                    //check for max score and store best score
+                    score.best = Math.max(score.value,score.best);
+                    localStorage.setItem("best",score.best);
+                    
+                    pointAudio.play();
                 }
             }
         } else if (state.current === state.getReady) { //reset the position array
@@ -271,6 +276,35 @@ const gameOver = {
     }
 }
 
+//score
+const score = {
+    best: parseInt(localStorage.getItem('best')) || 0,
+    value: 0,
+
+    draw: function() {
+        ctx.fillStyle = "white";
+        ctx.strokeStyle = "black"
+
+        if (state.current === state.game) {
+            ctx.lineWidth = 2;
+            ctx.font ="35px Teko";
+            ctx.fillText(this.value, cvs.width/2, 50);
+            ctx.strokeText(this.value, cvs.width/2, 50);
+        } else if (state.current === state.gameOver) {
+            //score value
+            ctx.font ="25px Teko";
+            ctx.fillText(this.value, 225, 265);
+            ctx.strokeText(this.value, 225, 265);
+            //best value
+            ctx.font ="25px Teko";
+            ctx.fillText(this.best, 225, 306);
+            ctx.strokeText(this.best, 225, 306);
+        } else {
+            this.value = 0;
+        }
+    }
+}
+
 function draw() {
     ctx.fillStyle = "lightblue";
     ctx.fillRect(0,0,cvs.width, cvs.height);
@@ -281,6 +315,8 @@ function draw() {
     bird.draw();
     getReady.draw();
     gameOver.draw();
+    score.draw();
+
 }
 
 function update() {
